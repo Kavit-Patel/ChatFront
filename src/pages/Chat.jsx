@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { MyContext } from "../components/Context";
 import { io } from "socket.io-client";
 const ENDPOINT = "https://chat-8nmt.onrender.com";
+// const ENDPOINT = "http://localhost:5500";
 const Chat = () => {
   const { localUser, members, friends } = useContext(MyContext);
   const [value, setValue] = useState("");
@@ -14,7 +15,7 @@ const Chat = () => {
   let user = localUser;
 
   useEffect(() => {
-    console.log("calling", live, "value", value);
+    // console.log("calling", live, "value", value);
     socket.current = io(ENDPOINT);
     socket.current.on("connect", () => {
       socket.current.emit("firstConnect", {
@@ -41,11 +42,12 @@ const Chat = () => {
         setMessages((prev) => [...prev, data]);
       });
     });
-    console.log(value);
+    // console.log(value);
     setValue("");
-  }, [other?.name, user._id, user.name, live]);
+  }, [live]);
   const startChat = async (user, member) => {
-    console.log("sc", live);
+    // console.log("sc", live);
+    setLive((prev) => !prev);
     const res = await fetch(`${ENDPOINT}/user/chat`, {
       method: "POST",
       credentials: "include",
@@ -64,8 +66,7 @@ const Chat = () => {
       setMessages(data.messages);
     }
 
-    setLive((prev) => !prev);
-    console.log(live);
+    // console.log(live);
   };
 
   const handleSearch = (e) => {
@@ -177,7 +178,10 @@ const Chat = () => {
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                         onKeyUp={(e) => {
-                          e.key === "Enter" && startChat(user, other, value);
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            startChat(user, other, value);
+                          }
                         }}
                         className="font-semibold resize-none scrollbar-hide break-words w-[90%] h-14 rounded-md py-3 pl-3 pr-16 border border-pink-500 bg-gray-100 cursor-context-menu transition-all delay-50 focus:bg-blue-300 focus:text-blue-950 hover:bg-blue-200 hover:outline-pink-500"
                         type="text"

@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MyContext } from "../components/Context";
 const ENDPOINT = "https://chat-8nmt.onrender.com";
+// const ENDPOINT = "http://localhost:5500";
 
 const Signin = () => {
   const [user, setUser] = useState({ email: "", password: "" });
